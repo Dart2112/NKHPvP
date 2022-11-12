@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+group = 'com.carpercreative.minecraft'
+archivesBaseName = "NKHPvP"
+version = '0.1.0'
+description = 'PvP plugin for the NKH Harry Potter Event'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+defaultTasks 'clean', 'build', 'shadowJar'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    //Spigot Repo
+    maven {
+        url = uri('https://repo.papermc.io/repository/maven-public//')
+    }
+    //Essentials Repo
+    maven {
+        url = uri('https://repo.essentialsx.net/releases/')
+    }
+}
+
+dependencies {
+    compile 'net.lapismc:LapisCore:1.11.0'
+    compile 'org.ocpsoft.prettytime:prettytime:5.0.4.Final'
+    compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
+}
+
+processResources {
+    filter {
+        it.replace('${project.version}', project.getVersion())
+    }
+}
+
+shadowJar {
+    archiveFileName.set(archivesBaseName + "-" + project.getVersion() + ".jar")
+    exclude 'javax/**'
+    relocate("org.ocpsoft.prettytime", "com.carpercreative.minecraft.nkhpvp.util.prettytime")
+    relocate("net.lapismc.lapiscore", "com.carpercreative.minecraft.nkhpvp.util.core")
+}
+
+artifacts {
+    archives shadowJar
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}

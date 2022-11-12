@@ -1,0 +1,4 @@
+name: NKHPvP
+version: ${project.version}
+main: com.carpercreative.minecraft.nkhpvp.NKHPvP
+api-version: 1.18
