@@ -54,16 +54,26 @@ public class GameManager {
 
     public void removePlayer(Player player) {
         PvpPlayer p = getPlayer(player.getUniqueId());
-        if (p != null)
+        if (p != null) {
             allPlayers.remove(p);
+            p.getTeam().removePlayer(p);
+            //TODO: remove them from the team
+        }
     }
 
     public void inductPlayerToTeam(PvpPlayer player) {
-        //Place on a random team
-        if (random.nextBoolean()) {
+        //Add players to the smaller team
+        if (hogwarts.getTeamPlayers().size() < deatheaters.getTeamPlayers().size()) {
+            hogwarts.addPlayer(player);
+        } else if (deatheaters.getTeamPlayers().size() < hogwarts.getTeamPlayers().size()) {
             deatheaters.addPlayer(player);
         } else {
-            hogwarts.addPlayer(player);
+            //If both teams are equal size, place on a random team
+            if (random.nextBoolean()) {
+                deatheaters.addPlayer(player);
+            } else {
+                hogwarts.addPlayer(player);
+            }
         }
     }
 
@@ -85,20 +95,34 @@ public class GameManager {
 
     public void endGame() {
         isGameStarted = false;
-        //Teleport players to lobby
+        //TODO: Report game results in some way (Possibly titles for immediate and boss bar for long term)
+        //This needs to be done before we teleport and clear teams so that each team gets their own stats
         for (PvpPlayer p : allPlayers) {
+            //This is mainly so players who are currently dead respawn in the correct place
+            p.setTeam(null);
+            //Teleport players to lobby
             teleportToLobby(p);
         }
         //TODO: Clear kits
-        //TODO: Report game results in some way (Possibly titles for immediate and boss bar for long term)
+    }
+
+    public Location getLobbyLocationVaried() {
+        //How far from the lobby location will players teleport too (this is the diameter not radius)
+        int variance = 20;
+        return variedLocation(variance, lobbyLocation);
     }
 
     public void teleportToLobby(PvpPlayer p) {
-        //How far from the lobby location will players teleport too (this is the diameter not radius)
-        int variance = 20;
-        p.getBukkitPlayer().teleport(variedLocation(variance, lobbyLocation));
+        p.getBukkitPlayer().teleport(getLobbyLocationVaried());
     }
 
+    /**
+     * Applies randomness to a location to stop players spawning/teleporting on top of each other
+     *
+     * @param variance The diameter from loc that the location is allowed to deviate by
+     * @param loc      The center of the circle that the new location can be in
+     * @return a location with random variance applied to it
+     */
     public Location variedLocation(int variance, Location loc) {
         Random r = random;
         //Apply a slight random adjustment to x and z values to spread the players out

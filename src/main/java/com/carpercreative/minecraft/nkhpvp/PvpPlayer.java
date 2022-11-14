@@ -4,10 +4,10 @@ import org.bukkit.entity.Player;
 
 public class PvpPlayer {
 
-    int kills, deaths;
-    double damageDealt;
-    Player bukkitPlayer;
-    PvpTeam team;
+    private final Player bukkitPlayer;
+    private int kills, deaths;
+    private double damageDealt;
+    private PvpTeam team;
 
     public PvpPlayer(Player player) {
         this.bukkitPlayer = player;
@@ -23,17 +23,17 @@ public class PvpPlayer {
 
     public void addKill() {
         kills++;
-        team.kills++;
+        team.incrementKills();
     }
 
     public void addDeath() {
         deaths++;
-        team.deaths++;
+        team.incrementDeaths();
     }
 
     public void addDamageDealt(double damage) {
         this.damageDealt += damage;
-        team.damageDealt += damage;
+        team.incrementDamageDealt(damage);
     }
 
     public void resetScores() {
