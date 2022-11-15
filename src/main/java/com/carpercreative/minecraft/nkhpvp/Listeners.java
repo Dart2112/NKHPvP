@@ -59,7 +59,7 @@ public class Listeners implements Listener {
             //Must be a named snowball
             return;
         }
-        String spellName = heldItem.getItemMeta().displayName().examinableName();
+        String spellName = heldItem.getItemMeta().getDisplayName();
         Spell spell = plugin.spellManager.getSpellByName(spellName);
         if (spell == null) {
             //Spell with the snowballs name doesn't exist
@@ -93,13 +93,13 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
-        PvpPlayer deadPlayer = plugin.gameManager.getPlayer(e.getPlayer().getUniqueId());
+        PvpPlayer deadPlayer = plugin.gameManager.getPlayer(e.getEntity().getUniqueId());
         //Make sure this player was a part of the game
         if (deadPlayer == null)
             return;
         deadPlayer.addDeath();
         //This last damage should be what killed the player
-        EntityDamageEvent lastDamage = e.getPlayer().getLastDamageCause();
+        EntityDamageEvent lastDamage = e.getEntity().getLastDamageCause();
         if (lastDamage == null)
             return;
         //Check if the type of damage is tracked to a spell

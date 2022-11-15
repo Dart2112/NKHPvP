@@ -5,8 +5,6 @@ import com.carpercreative.minecraft.nkhpvp.PvpPlayer;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class Spell implements MetadataValue {
 
@@ -19,7 +17,7 @@ public abstract class Spell implements MetadataValue {
     public abstract void applyEffect(PvpPlayer spellCaster, PvpPlayer spellRecipient, EntityDamageByEntityEvent e);
 
     @Override
-    public @Nullable Object value() {
+    public Object value() {
         return spellName;
     }
 
@@ -59,12 +57,12 @@ public abstract class Spell implements MetadataValue {
     }
 
     @Override
-    public @NotNull String asString() {
+    public String asString() {
         return spellName;
     }
 
     @Override
-    public @Nullable Plugin getOwningPlugin() {
+    public Plugin getOwningPlugin() {
         return NKHPvP.getInstance();
     }
 

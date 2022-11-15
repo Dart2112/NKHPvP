@@ -4,8 +4,6 @@ import com.carpercreative.minecraft.nkhpvp.NKHPvP;
 import com.carpercreative.minecraft.nkhpvp.PvpPlayer;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class SpellCaster implements MetadataValue {
 
@@ -20,7 +18,7 @@ public class SpellCaster implements MetadataValue {
     }
 
     @Override
-    public @Nullable Object value() {
+    public Object value() {
         return spellCaster;
     }
 
@@ -60,12 +58,12 @@ public class SpellCaster implements MetadataValue {
     }
 
     @Override
-    public @NotNull String asString() {
+    public String asString() {
         return spellCaster.getBukkitPlayer().getName();
     }
 
     @Override
-    public @Nullable Plugin getOwningPlugin() {
+    public Plugin getOwningPlugin() {
         return NKHPvP.getInstance();
     }
 

@@ -17,7 +17,7 @@ repositories {
     mavenLocal()
     //Spigot Repo
     maven {
-        url = uri('https://repo.papermc.io/repository/maven-public//')
+        url = uri('https://hub.spigotmc.org/nexus/content/groups/public/')
     }
     //Essentials Repo
     maven {
@@ -28,7 +28,7 @@ repositories {
 dependencies {
     compile 'net.lapismc:LapisCore:1.11.0'
     compile 'org.ocpsoft.prettytime:prettytime:5.0.4.Final'
-    compileOnly 'io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
 }
 
 processResources {
