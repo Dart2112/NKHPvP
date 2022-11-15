@@ -1,1 +1,9 @@
 ConfigVersion: 1
+
+SetSpawn:
+  Success: "Spawn successfully set to your current location"
+  WrongSpawn: "Spawn type not valid, options are: lobby, student, deatheater"
+
+
+Error:
+  NotPermitted: "Only OPs are permitted to use this command"

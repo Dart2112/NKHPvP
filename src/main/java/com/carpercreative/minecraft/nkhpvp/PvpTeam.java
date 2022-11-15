@@ -1,12 +1,13 @@
 package com.carpercreative.minecraft.nkhpvp;
 
+import net.lapismc.lapiscore.utils.LocationUtils;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;
 
 enum Team {
-    deatheater, hogwarts
+    DEATH_EATER, STUDENT
 }
 
 public class PvpTeam {
@@ -21,6 +22,8 @@ public class PvpTeam {
     public PvpTeam(Team team, GameManager gm) {
         this.team = team;
         this.gm = gm;
+        teamSpawn = new LocationUtils().parseStringToLocation
+                (NKHPvP.getInstance().getConfig().getString("Locations." + getNiceTeamName()));
     }
 
     public void addPlayer(PvpPlayer p) {
@@ -73,6 +76,16 @@ public class PvpTeam {
 
     public double getDamageDealt() {
         return damageDealt;
+    }
+
+    public void setTeamSpawn(Location loc) {
+        this.teamSpawn = loc;
+        NKHPvP.getInstance().getConfig().set("Locations." + getNiceTeamName(),
+                new LocationUtils().parseLocationToString(loc));
+    }
+
+    private String getNiceTeamName() {
+        return team == Team.STUDENT ? "Students" : "DeathEaters";
     }
 
     public void resetScores() {

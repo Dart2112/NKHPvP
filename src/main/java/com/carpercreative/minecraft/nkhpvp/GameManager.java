@@ -1,6 +1,8 @@
 package com.carpercreative.minecraft.nkhpvp;
 
+import net.lapismc.lapiscore.utils.LocationUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -18,8 +20,9 @@ public class GameManager {
     private final List<PvpPlayer> allPlayers = new ArrayList<>();
     public PrettyTime prettyTime;
     public Random random = new Random();
-    public PvpTeam deatheaters = new PvpTeam(Team.deatheater, this);
-    public PvpTeam hogwarts = new PvpTeam(Team.hogwarts, this);
+    public PvpTeam deathEaters = new PvpTeam(Team.DEATH_EATER, this);
+    public PvpTeam students = new PvpTeam(Team.STUDENT, this);
+    private boolean isEnabled = false;
     private boolean isGameStarted = false;
     //Time remaining in seconds
     private long timeRemaining;
@@ -31,9 +34,39 @@ public class GameManager {
         prettyTime = new PrettyTime();
         prettyTime.removeUnit(JustNow.class);
         prettyTime.removeUnit(Millisecond.class);
+        lobbyLocation = new LocationUtils().parseStringToLocation(plugin.getConfig().getString("Locations.Lobby"));
+    }
+
+    public void enable() {
+        isEnabled = true;
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+            //Only grab players who are in adventure or survival mode
+            if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
+                addPlayer(p);
+            }
+        }
+    }
+
+    public void disable() {
+        isEnabled = false;
+        Location l = Bukkit.getServer().getWorld("Ruined Hogwarts").getSpawnLocation();
+        for (PvpPlayer p : allPlayers) {
+            p.getBukkitPlayer().teleport(l);
+            //TODO: Clear scoreboard stuffs
+        }
+        allPlayers.clear();
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public boolean isGameStarted() {
+        return isGameStarted;
     }
 
     public void addPlayer(Player player) {
+        player.setGameMode(GameMode.SURVIVAL);
         PvpPlayer p = new PvpPlayer(player);
         allPlayers.add(p);
         teleportToLobby(p);
@@ -53,6 +86,7 @@ public class GameManager {
     }
 
     public void removePlayer(Player player) {
+        //TODO: add checks to make sure we actually had this player
         PvpPlayer p = getPlayer(player.getUniqueId());
         if (p != null) {
             allPlayers.remove(p);
@@ -63,24 +97,24 @@ public class GameManager {
 
     public void inductPlayerToTeam(PvpPlayer player) {
         //Add players to the smaller team
-        if (hogwarts.getTeamPlayers().size() < deatheaters.getTeamPlayers().size()) {
-            hogwarts.addPlayer(player);
-        } else if (deatheaters.getTeamPlayers().size() < hogwarts.getTeamPlayers().size()) {
-            deatheaters.addPlayer(player);
+        if (students.getTeamPlayers().size() < deathEaters.getTeamPlayers().size()) {
+            students.addPlayer(player);
+        } else if (deathEaters.getTeamPlayers().size() < students.getTeamPlayers().size()) {
+            deathEaters.addPlayer(player);
         } else {
             //If both teams are equal size, place on a random team
             if (random.nextBoolean()) {
-                deatheaters.addPlayer(player);
+                deathEaters.addPlayer(player);
             } else {
-                hogwarts.addPlayer(player);
+                students.addPlayer(player);
             }
         }
     }
 
     public void startGame() {
         //Reset team scores
-        deatheaters.resetScores();
-        hogwarts.resetScores();
+        deathEaters.resetScores();
+        students.resetScores();
         //TODO: Reset scoreboards or whatever
         for (PvpPlayer p : allPlayers) {
             p.resetScores();
@@ -114,6 +148,11 @@ public class GameManager {
 
     public void teleportToLobby(PvpPlayer p) {
         p.getBukkitPlayer().teleport(getLobbyLocationVaried());
+    }
+
+    public void setLobbySpawn(Location loc) {
+        this.lobbyLocation = loc;
+        plugin.getConfig().set("Locations.Lobby", new LocationUtils().parseLocationToString(loc));
     }
 
     /**

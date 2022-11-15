@@ -1,6 +1,7 @@
 package com.carpercreative.minecraft.nkhpvp;
 
 import com.carpercreative.minecraft.nkhpvp.spells.Spell;
+import com.carpercreative.minecraft.nkhpvp.util.SpellCaster;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,7 +28,8 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        plugin.gameManager.addPlayer(e.getPlayer());
+        if (plugin.gameManager.isEnabled())
+            plugin.gameManager.addPlayer(e.getPlayer());
     }
 
     @EventHandler
@@ -47,6 +49,10 @@ public class Listeners implements Listener {
             return;
         }
         Player player = (Player) ball.getShooter();
+        PvpPlayer pvpPlayer = plugin.gameManager.getPlayer(player.getUniqueId());
+        //Make sure this player was a part of the game
+        if (pvpPlayer == null)
+            return;
         ItemStack heldItem = player.getInventory().getItem(player.getInventory().getHeldItemSlot());
         if (heldItem == null || !heldItem.getType().equals(Material.SNOWBALL)
                 || !heldItem.getItemMeta().hasDisplayName()) {
@@ -60,6 +66,7 @@ public class Listeners implements Listener {
             return;
         }
         ball.setMetadata("Spell", spell);
+        ball.setMetadata("SpellCaster", new SpellCaster(pvpPlayer));
     }
 
     @EventHandler
@@ -76,8 +83,8 @@ public class Listeners implements Listener {
         Snowball ball = (Snowball) e.getDamager();
         //Get the spell attached to the snowball
         Spell spell = (Spell) ball.getMetadata("Spell").get(0);
+        PvpPlayer damageGiver = ((SpellCaster) ball.getMetadata("SpellCaster").get(0)).getSpellCaster();
         //Run the effect on the player
-        PvpPlayer damageGiver = plugin.gameManager.getPlayer(e.getDamager().getUniqueId());
         PvpPlayer damageTaker = plugin.gameManager.getPlayer(e.getEntity().getUniqueId());
         spell.applyEffect(damageGiver, damageTaker, e);
         //Negate the normal damage done to the player and instead allow the spells to do damage
@@ -87,6 +94,9 @@ public class Listeners implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         PvpPlayer deadPlayer = plugin.gameManager.getPlayer(e.getPlayer().getUniqueId());
+        //Make sure this player was a part of the game
+        if (deadPlayer == null)
+            return;
         deadPlayer.addDeath();
         //This last damage should be what killed the player
         EntityDamageEvent lastDamage = e.getPlayer().getLastDamageCause();
@@ -103,6 +113,9 @@ public class Listeners implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         PvpPlayer p = plugin.gameManager.getPlayer(e.getPlayer().getUniqueId());
+        //Make sure this player was a part of the game
+        if (p == null)
+            return;
         if (p.getTeam() == null) {
             e.setRespawnLocation(plugin.gameManager.getLobbyLocationVaried());
         } else {
