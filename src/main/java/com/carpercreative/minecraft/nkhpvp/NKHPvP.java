@@ -1,5 +1,6 @@
 package com.carpercreative.minecraft.nkhpvp;
 
+import com.carpercreative.minecraft.nkhpvp.commands.PvPCommand;
 import net.lapismc.lapiscore.LapisCoreConfiguration;
 import net.lapismc.lapiscore.LapisCorePlugin;
 import net.lapismc.lapiscore.utils.LapisCoreFileWatcher;
@@ -17,6 +18,7 @@ public final class NKHPvP extends LapisCorePlugin {
         new Listeners(this);
         registerConfiguration(new LapisCoreConfiguration(this, 1, 1));
         fileWatcher = new LapisCoreFileWatcher(this);
+        new PvPCommand(this);
     }
 
     @Override

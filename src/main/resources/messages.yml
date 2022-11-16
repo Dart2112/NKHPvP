@@ -1,9 +1,22 @@
 ConfigVersion: 1
 
+Enable:
+  EnableSuccess: "PvP plugin enabling. Use \"/pvp start (minutes to run for)\" to start the match"
+  DisableSuccess: "PvP plugin disabling"
+  Error: "The game is already in this state"
+
+Start:
+  Success: "Starting game..."
+  Player: "You are on the [TEAM_NAME] team"
+  NumberFormat: "The time you entered is not a valid number"
+
 SetSpawn:
   Success: "Spawn successfully set to your current location"
-  WrongSpawn: "Spawn type not valid, options are: lobby, student, deatheater"
+  InvalidTeam: "Spawn type not valid, options are: lobby, student, deatheater"
 
+SetKit:
+  Success: "Team kit successfully registered"
+  InvalidTeam: "Invalid team name, options are: student or deatheater"
 
 Error:
   NotPermitted: "Only OPs are permitted to use this command"

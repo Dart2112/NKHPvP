@@ -2,13 +2,11 @@ package com.carpercreative.minecraft.nkhpvp;
 
 import net.lapismc.lapiscore.utils.LocationUtils;
 import org.bukkit.Location;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-enum Team {
-    DEATH_EATER, STUDENT
-}
 
 public class PvpTeam {
 
@@ -27,12 +25,17 @@ public class PvpTeam {
     }
 
     public void addPlayer(PvpPlayer p) {
+        //Register the player with this team
         players.add(p);
         p.setTeam(this);
         //TODO: Scoreboard teams ect
         //Teleport to spawn area
         teleportToSpawn(p);
-        //TODO: Tell the player which team they are on
+        //Set inventory to team kit
+        p.loadKit();
+        //Tell the player which team they are on
+        String msg = NKHPvP.getInstance().config.getMessage("Start.Player").replace("[TEAM_NAME]", getNiceTeamName());
+        p.getBukkitPlayer().sendMessage(msg);
     }
 
     public void removePlayer(PvpPlayer p) {
@@ -82,6 +85,22 @@ public class PvpTeam {
         this.teamSpawn = loc;
         NKHPvP.getInstance().getConfig().set("Locations." + getNiceTeamName(),
                 new LocationUtils().parseLocationToString(loc));
+    }
+
+    public ItemStack[] getTeamKit() {
+        Object data = NKHPvP.getInstance().getConfig().get("Kits." + getNiceTeamName());
+        if (data instanceof ItemStack[]) {
+            return (ItemStack[]) data;
+        } else {
+            //TODO: This code is designed to throw an error so I can see the type
+            ItemStack[] stack = (ItemStack[]) data;
+            return null;
+        }
+    }
+
+    public void setTeamKit(Inventory inv) {
+        ItemStack[] items = inv.getContents();
+        NKHPvP.getInstance().getConfig().set("Kits." + getNiceTeamName(), items);
     }
 
     private String getNiceTeamName() {

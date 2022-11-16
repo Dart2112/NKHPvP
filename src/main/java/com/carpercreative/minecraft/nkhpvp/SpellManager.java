@@ -1,5 +1,6 @@
 package com.carpercreative.minecraft.nkhpvp;
 
+import com.carpercreative.minecraft.nkhpvp.spells.DamageSpell;
 import com.carpercreative.minecraft.nkhpvp.spells.FireSpell;
 import com.carpercreative.minecraft.nkhpvp.spells.KnockbackSpell;
 import com.carpercreative.minecraft.nkhpvp.spells.Spell;
@@ -129,6 +130,7 @@ public class SpellManager implements Listener {
     private void loadSpells() {
         spells.add(new FireSpell());
         spells.add(new KnockbackSpell());
+        spells.add(new DamageSpell());
     }
 
     protected static class DamageType {

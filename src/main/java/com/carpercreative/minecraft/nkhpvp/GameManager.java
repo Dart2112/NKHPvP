@@ -112,6 +112,7 @@ public class GameManager {
     }
 
     public void startGame() {
+        //TODO: Maybe start a 5 second timer before the game starts
         //Reset team scores
         deathEaters.resetScores();
         students.resetScores();
@@ -166,6 +167,10 @@ public class GameManager {
         Random r = random;
         //Apply a slight random adjustment to x and z values to spread the players out
         return loc.add(new Vector(r.nextInt(variance) - variance / 2, 0, r.nextInt(variance) - variance / 2));
+    }
+
+    public void setTimer(int minutes) {
+        timeRemaining = minutes * 60L;
     }
 
     public Runnable getTimerTickTask() {
