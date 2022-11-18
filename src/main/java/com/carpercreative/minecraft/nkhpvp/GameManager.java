@@ -133,6 +133,13 @@ public class GameManager {
         //TODO: Report game results in some way (Possibly titles for immediate and boss bar for long term)
         //This needs to be done before we teleport and clear teams so that each team gets their own stats
         for (PvpPlayer p : allPlayers) {
+            //Tell the player how they and their team went, This is temporary
+            PvpTeam team = p.getTeam();
+            String teamMsg = "Team Scores: Kills: " + team.getKills() + ", Deaths: " + team.getDeaths()
+                    + ", Damage Dealt: " + team.getDamageDealt();
+            String personalMsg = "Your Scores: Kills: " + p.getKills() + ", Deaths: " + p.getDeaths()
+                    + ", Damage Dealt: " + p.getDamageDealt();
+            p.getBukkitPlayer().sendMessage(teamMsg, personalMsg);
             //This is mainly so players who are currently dead respawn in the correct place
             p.setTeam(null);
             //Teleport players to lobby

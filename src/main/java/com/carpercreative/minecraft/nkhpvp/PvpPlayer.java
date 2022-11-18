@@ -51,6 +51,18 @@ public class PvpPlayer {
         team.incrementDamageDealt(damage);
     }
 
+    public int getKills() {
+        return kills;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public double getDamageDealt() {
+        return damageDealt;
+    }
+
     public void resetScores() {
         kills = 0;
         deaths = 0;
