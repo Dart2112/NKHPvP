@@ -10,6 +10,9 @@ Start:
   Player: "You are on the [TEAM_NAME] team"
   NumberFormat: "The time you entered is not a valid number"
 
+End:
+  Winner: "[TEAM_NAME] wins [SCORE]"
+
 SetSpawn:
   Success: "Spawn successfully set to your current location"
   InvalidTeam: "Spawn type not valid, options are: lobby, student, deatheater"

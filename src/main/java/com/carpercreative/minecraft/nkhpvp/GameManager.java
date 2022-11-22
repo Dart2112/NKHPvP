@@ -4,6 +4,9 @@ import net.lapismc.lapiscore.utils.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -13,6 +16,7 @@ import org.ocpsoft.prettytime.units.JustNow;
 import org.ocpsoft.prettytime.units.Millisecond;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameManager {
 
@@ -20,25 +24,33 @@ public class GameManager {
     private final List<PvpPlayer> allPlayers = new ArrayList<>();
     public PrettyTime prettyTime;
     public Random random = new Random();
-    public PvpTeam deathEaters = new PvpTeam(Team.DEATH_EATER, this);
-    public PvpTeam students = new PvpTeam(Team.STUDENT, this);
+    private final BossBar progressBar;
+    public PvpTeam deathEaters;
     private boolean isEnabled = false;
     private boolean isGameStarted = false;
     //Time remaining in seconds
     private long timeRemaining;
+    public PvpTeam students;
+    private long gameLength;
     private BukkitTask timerTask;
     private Location lobbyLocation;
+    private BukkitTask countdownTask;
 
     public GameManager(NKHPvP plugin) {
         this.plugin = plugin;
         prettyTime = new PrettyTime();
         prettyTime.removeUnit(JustNow.class);
         prettyTime.removeUnit(Millisecond.class);
+        students = new PvpTeam(Team.STUDENT, plugin, this);
+        deathEaters = new PvpTeam(Team.DEATH_EATER, plugin, this);
         lobbyLocation = new LocationUtils().parseStringToLocation(plugin.getConfig().getString("Locations.Lobby"));
+        progressBar = Bukkit.createBossBar("Time Remaining: ", BarColor.BLUE, BarStyle.SOLID);
+        progressBar.setVisible(false);
     }
 
     public void enable() {
         isEnabled = true;
+        //TODO: Maybe dont do this, maybe use a command
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             //Only grab players who are in adventure or survival mode
             if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
@@ -49,11 +61,14 @@ public class GameManager {
 
     public void disable() {
         isEnabled = false;
+        isGameStarted = false;
+        //TODO: check if we should do this
         Location l = Bukkit.getServer().getWorld("Ruined Hogwarts").getSpawnLocation();
         for (PvpPlayer p : allPlayers) {
             p.getBukkitPlayer().teleport(l);
             //TODO: Clear scoreboard stuffs
         }
+        progressBar.setVisible(false);
         allPlayers.clear();
     }
 
@@ -86,12 +101,11 @@ public class GameManager {
     }
 
     public void removePlayer(Player player) {
-        //TODO: add checks to make sure we actually had this player
         PvpPlayer p = getPlayer(player.getUniqueId());
         if (p != null) {
             allPlayers.remove(p);
-            p.getTeam().removePlayer(p);
-            //TODO: remove them from the team
+            if (p.getTeam() != null)
+                p.getTeam().removePlayer(p);
         }
     }
 
@@ -109,10 +123,25 @@ public class GameManager {
                 students.addPlayer(player);
             }
         }
+        progressBar.addPlayer(player.getBukkitPlayer());
+    }
+
+    public void triggerStart() {
+        AtomicInteger i = new AtomicInteger(5);
+        countdownTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (i.get() == 0) {
+                startGame();
+            } else {
+                for (PvpPlayer p : allPlayers) {
+                    p.getBukkitPlayer().sendTitle("Game Starting in " + i, "", 2, 16, 2);
+                }
+                i.getAndDecrement();
+            }
+        }, 20, 20);
     }
 
     public void startGame() {
-        //TODO: Maybe start a 5 second timer before the game starts
+        countdownTask.cancel();
         //Reset team scores
         deathEaters.resetScores();
         students.resetScores();
@@ -125,12 +154,22 @@ public class GameManager {
         timerTask = Bukkit.getScheduler().runTaskTimer(plugin, getTimerTickTask(), 20, 20);
         plugin.tasks.addTask(timerTask);
         isGameStarted = true;
-        //TODO: Give players kits
+        progressBar.setVisible(true);
     }
 
     public void endGame() {
         isGameStarted = false;
-        //TODO: Report game results in some way (Possibly titles for immediate and boss bar for long term)
+        String titleMsg = plugin.config.getMessage("End.Winner");
+        PvpTeam winner;
+        //If both teams have the same number of kills we refer to damage
+        if (students.getKills() == deathEaters.getKills()) {
+            winner = students.getDamageDealt() > deathEaters.getDamageDealt() ? students : deathEaters;
+        } else {
+            winner = students.getKills() > deathEaters.getKills() ? students : deathEaters;
+        }
+        PvpTeam loser = winner == students ? deathEaters : students;
+        titleMsg = titleMsg.replace("[TEAM_NAME]", winner.getNiceTeamName());
+        titleMsg = titleMsg.replace("[SCORE]", winner.getKills() + " - " + loser.getKills());
         //This needs to be done before we teleport and clear teams so that each team gets their own stats
         for (PvpPlayer p : allPlayers) {
             //Tell the player how they and their team went, This is temporary
@@ -144,8 +183,12 @@ public class GameManager {
             p.setTeam(null);
             //Teleport players to lobby
             teleportToLobby(p);
+            //Send title to players declaring winner
+            p.getBukkitPlayer().sendTitle(titleMsg, "", 5, 10 * 20, 5);
+            //Clear inventory
+            p.getBukkitPlayer().getInventory().clear();
         }
-        //TODO: Clear kits
+        progressBar.setVisible(false);
     }
 
     public Location getLobbyLocationVaried() {
@@ -161,6 +204,7 @@ public class GameManager {
     public void setLobbySpawn(Location loc) {
         this.lobbyLocation = loc;
         plugin.getConfig().set("Locations.Lobby", new LocationUtils().parseLocationToString(loc));
+        plugin.saveConfig();
     }
 
     /**
@@ -178,6 +222,7 @@ public class GameManager {
 
     public void setTimer(int minutes) {
         timeRemaining = minutes * 60L;
+        gameLength = minutes * 60L;
     }
 
     public Runnable getTimerTickTask() {
@@ -189,7 +234,9 @@ public class GameManager {
             }
             //Decrement the timer
             timeRemaining--;
-            //TODO: Update scoreboard or boss bar or whatever for the time
+            double progress = Double.max(0, (float) timeRemaining / gameLength);
+            progressBar.setProgress(progress);
+            progressBar.setTitle("Time Remaining: " + getTimeDifference(System.currentTimeMillis() + (timeRemaining * 1000)));
         };
     }
 

@@ -2,6 +2,7 @@ package com.carpercreative.minecraft.nkhpvp;
 
 import net.lapismc.lapiscore.utils.LocationUtils;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class PvpTeam {
 
+    private final NKHPvP plugin;
     private final GameManager gm;
     private final Team team;
     private final List<PvpPlayer> players = new ArrayList<>();
@@ -17,11 +19,12 @@ public class PvpTeam {
     private double damageDealt;
     private Location teamSpawn;
 
-    public PvpTeam(Team team, GameManager gm) {
+    public PvpTeam(Team team, NKHPvP plugin, GameManager gm) {
+        this.plugin = plugin;
         this.team = team;
         this.gm = gm;
         teamSpawn = new LocationUtils().parseStringToLocation
-                (NKHPvP.getInstance().getConfig().getString("Locations." + getNiceTeamName()));
+                (plugin.getConfig().getString("Locations." + getNiceTeamName()));
     }
 
     public void addPlayer(PvpPlayer p) {
@@ -31,10 +34,12 @@ public class PvpTeam {
         //TODO: Scoreboard teams ect
         //Teleport to spawn area
         teleportToSpawn(p);
+        //Heal the player
+        p.getBukkitPlayer().setHealth(p.getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         //Set inventory to team kit
         p.loadKit();
         //Tell the player which team they are on
-        String msg = NKHPvP.getInstance().config.getMessage("Start.Player").replace("[TEAM_NAME]", getNiceTeamName());
+        String msg = plugin.config.getMessage("Start.Player").replace("[TEAM_NAME]", getNiceTeamName());
         p.getBukkitPlayer().sendMessage(msg);
     }
 
@@ -83,27 +88,27 @@ public class PvpTeam {
 
     public void setTeamSpawn(Location loc) {
         this.teamSpawn = loc;
-        NKHPvP.getInstance().getConfig().set("Locations." + getNiceTeamName(),
+        plugin.getConfig().set("Locations." + getNiceTeamName(),
                 new LocationUtils().parseLocationToString(loc));
+        plugin.saveConfig();
     }
 
     public ItemStack[] getTeamKit() {
         Object data = NKHPvP.getInstance().getConfig().get("Kits." + getNiceTeamName());
-        if (data instanceof ItemStack[]) {
-            return (ItemStack[]) data;
+        if (data instanceof ArrayList) {
+            return ((ArrayList<ItemStack>) data).toArray(new ItemStack[]{});
         } else {
-            //TODO: This code is designed to throw an error so I can see the type
-            ItemStack[] stack = (ItemStack[]) data;
             return null;
         }
     }
 
     public void setTeamKit(Inventory inv) {
         ItemStack[] items = inv.getContents();
-        NKHPvP.getInstance().getConfig().set("Kits." + getNiceTeamName(), items);
+        plugin.getConfig().set("Kits." + getNiceTeamName(), items);
+        plugin.saveConfig();
     }
 
-    private String getNiceTeamName() {
+    public String getNiceTeamName() {
         return team == Team.STUDENT ? "Students" : "DeathEaters";
     }
 

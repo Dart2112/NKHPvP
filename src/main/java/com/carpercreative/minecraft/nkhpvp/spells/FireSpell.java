@@ -14,7 +14,7 @@ public class FireSpell extends Spell {
 
     @Override
     public void applyEffect(PvpPlayer spellCaster, PvpPlayer spellRecipient, EntityDamageByEntityEvent e) {
-        int fireTicks = 20;
+        int fireTicks = 40;
         spellRecipient.getBukkitPlayer().setFireTicks(fireTicks);
         //Track fire damage for this player for the fire ticks
         ((NKHPvP) NKHPvP.getInstance()).spellManager.trackDamage(spellRecipient, spellCaster,

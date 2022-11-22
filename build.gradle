@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.carpercreative.minecraft'
 archivesBaseName = "NKHPvP"
-version = '0.1.0'
+version = '1.0.0'
 description = 'PvP plugin for the NKH Harry Potter Event'
 sourceCompatibility = '11'
 targetCompatibility = '11'

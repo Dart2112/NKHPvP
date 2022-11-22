@@ -28,6 +28,7 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
+        //TODO: Check if players should be auto added if the game is enabled
         if (plugin.gameManager.isEnabled())
             plugin.gameManager.addPlayer(e.getPlayer());
     }
@@ -39,6 +40,9 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onSnowballSpawn(EntitySpawnEvent e) {
+        //Check that the game is running
+        if (!plugin.gameManager.isGameStarted())
+            return;
         if (!(e.getEntity() instanceof Snowball)) {
             //We only want snowballs
             return;
@@ -71,6 +75,9 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onSnowballHit(EntityDamageByEntityEvent e) {
+        //Check that the game is running
+        if (!plugin.gameManager.isGameStarted())
+            return;
         if (!(e.getEntity() instanceof Player)) {
             //We only want players who have been damaged
             return;
@@ -81,6 +88,10 @@ public class Listeners implements Listener {
         }
         //Get the snowball
         Snowball ball = (Snowball) e.getDamager();
+        //Check it is a spell snowball
+        if (ball.getMetadata("Spell").size() == 0)
+            //It's not one of our snowballs
+            return;
         //Get the spell attached to the snowball
         Spell spell = (Spell) ball.getMetadata("Spell").get(0);
         PvpPlayer damageGiver = ((SpellCaster) ball.getMetadata("SpellCaster").get(0)).getSpellCaster();
@@ -93,11 +104,16 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
+        //Check that the game is running
+        if (!plugin.gameManager.isGameStarted())
+            return;
         PvpPlayer deadPlayer = plugin.gameManager.getPlayer(e.getEntity().getUniqueId());
         //Make sure this player was a part of the game
         if (deadPlayer == null)
             return;
         deadPlayer.addDeath();
+        e.setKeepInventory(false);
+        e.getDrops().clear();
         //This last damage should be what killed the player
         EntityDamageEvent lastDamage = e.getEntity().getLastDamageCause();
         if (lastDamage == null)
@@ -120,6 +136,7 @@ public class Listeners implements Listener {
             e.setRespawnLocation(plugin.gameManager.getLobbyLocationVaried());
         } else {
             e.setRespawnLocation(p.getTeam().getTeamSpawnVaried());
+            p.loadKit();
         }
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 public class SpellManager implements Listener {
 
     private final NKHPvP plugin;
-    List<Spell> spells;
+    List<Spell> spells = new ArrayList<>();
     HashMap<PvpPlayer, List<DamageType>> damageToTrack = new HashMap<>();
 
 
@@ -48,6 +48,8 @@ public class SpellManager implements Listener {
             return;
         }
         PvpPlayer player = plugin.gameManager.getPlayer(e.getEntity().getUniqueId());
+        if (player == null || damageToTrack.get(player) == null)
+            return;
         for (DamageType damageType : damageToTrack.get(player)) {
             if (e.getCause() != damageType.cause) {
                 //Only track the damage type that we have stored

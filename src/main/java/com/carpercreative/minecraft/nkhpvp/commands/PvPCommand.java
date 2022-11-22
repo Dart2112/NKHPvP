@@ -21,6 +21,15 @@ public class PvPCommand extends LapisCoreCommand {
     @Override
     protected void onCommand(CommandSender sender, String[] args) {
 
+        // /pvp join  (before permissions check so that all players may use it)
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("join")) {
+            if (isNotPlayer(sender, "Error.MustBePlayer"))
+                return;
+            plugin.gameManager.addPlayer((Player) sender);
+            return;
+        }
+
         //Check that it's either the console or an OPed player
         if (sender instanceof Player) {
             if (!sender.isOp()) {
@@ -59,7 +68,7 @@ public class PvPCommand extends LapisCoreCommand {
                 return;
             }
             plugin.gameManager.setTimer(minutes);
-            plugin.gameManager.startGame();
+            plugin.gameManager.triggerStart();
             sendMessage(sender, "Start.Success");
         }
 

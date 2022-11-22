@@ -1,5 +1,6 @@
 package com.carpercreative.minecraft.nkhpvp;
 
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -9,6 +10,7 @@ public class PvpPlayer {
     private int kills, deaths;
     private double damageDealt;
     private PvpTeam team;
+    private BossBar bar;
 
     public PvpPlayer(Player player) {
         this.bukkitPlayer = player;
@@ -61,6 +63,14 @@ public class PvpPlayer {
 
     public double getDamageDealt() {
         return damageDealt;
+    }
+
+    public BossBar getBossBar() {
+        return bar;
+    }
+
+    public void setBossBar(BossBar bar) {
+        this.bar = bar;
     }
 
     public void resetScores() {
