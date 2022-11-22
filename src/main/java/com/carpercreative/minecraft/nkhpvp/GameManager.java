@@ -63,9 +63,8 @@ public class GameManager {
         isEnabled = false;
         isGameStarted = false;
         //TODO: check if we should do this
-        Location l = Bukkit.getServer().getWorld("Ruined Hogwarts").getSpawnLocation();
         for (PvpPlayer p : allPlayers) {
-            p.getBukkitPlayer().teleport(l);
+            p.getBukkitPlayer().teleport(getLobbyLocationVaried());
             //TODO: Clear scoreboard stuffs
         }
         progressBar.setVisible(false);
@@ -86,7 +85,7 @@ public class GameManager {
         allPlayers.add(p);
         teleportToLobby(p);
         if (isGameStarted) {
-            //TODO: Do we drop them into the game?
+            inductPlayerToTeam(p);
         } else {
             //TODO: Enable whatever scoreboards or anything that is needed
         }
@@ -172,6 +171,9 @@ public class GameManager {
         titleMsg = titleMsg.replace("[SCORE]", winner.getKills() + " - " + loser.getKills());
         //This needs to be done before we teleport and clear teams so that each team gets their own stats
         for (PvpPlayer p : allPlayers) {
+            //Safety check in case a player has joined but not been assigned a team when the game ends
+            if (p.getTeam() == null)
+                continue;
             //Tell the player how they and their team went, This is temporary
             PvpTeam team = p.getTeam();
             String teamMsg = "Team Scores: Kills: " + team.getKills() + ", Deaths: " + team.getDeaths()
@@ -249,7 +251,7 @@ public class GameManager {
      * @return A human-readable time difference
      */
     public String getTimeDifference(Long epoch) {
-        return prettyTime.format(reduceDurationList(prettyTime.calculatePreciseDuration(new Date(epoch))));
+        return prettyTime.formatDuration(reduceDurationList(prettyTime.calculatePreciseDuration(new Date(epoch))));
     }
 
     /**
