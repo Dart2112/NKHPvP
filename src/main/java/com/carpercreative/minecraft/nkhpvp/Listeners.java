@@ -3,6 +3,7 @@ package com.carpercreative.minecraft.nkhpvp;
 import com.carpercreative.minecraft.nkhpvp.spells.Spell;
 import com.carpercreative.minecraft.nkhpvp.util.SpellCaster;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -29,7 +30,7 @@ public class Listeners implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         //TODO: Check if players should be auto added if the game is enabled
-        if (plugin.gameManager.isEnabled())
+        if (plugin.gameManager.isEnabled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL)
             plugin.gameManager.addPlayer(e.getPlayer());
     }
 
