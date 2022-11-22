@@ -193,7 +193,7 @@ public class GameManager {
 
     public Location getLobbyLocationVaried() {
         //How far from the lobby location will players teleport too (this is the diameter not radius)
-        int variance = 20;
+        int variance = 5;
         return variedLocation(variance, lobbyLocation);
     }
 

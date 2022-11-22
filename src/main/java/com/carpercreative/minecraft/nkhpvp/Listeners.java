@@ -64,6 +64,10 @@ public class Listeners implements Listener {
             //Must be a named snowball
             return;
         }
+        //Reset the snowballs to 4 to make sure they don't run out
+        heldItem.setAmount(4);
+        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), heldItem);
+        //Get the spell being cast
         String spellName = heldItem.getItemMeta().getDisplayName();
         Spell spell = plugin.spellManager.getSpellByName(spellName);
         if (spell == null) {

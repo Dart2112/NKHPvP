@@ -50,7 +50,7 @@ public class PvpTeam {
 
     public Location getTeamSpawnVaried() {
         //How far from the spawn location will players teleport too (this is the diameter not radius)
-        int variance = 10;
+        int variance = 2;
         return gm.variedLocation(variance, teamSpawn);
     }
 
