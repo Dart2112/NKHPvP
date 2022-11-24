@@ -79,7 +79,6 @@ public class GameManager {
     }
 
     public void addPlayer(Player player) {
-        //TODO: Make sure players only get added once
         player.setGameMode(GameMode.SURVIVAL);
         PvpPlayer p;
         if (getPlayer(player.getUniqueId()) == null) {

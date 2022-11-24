@@ -26,7 +26,7 @@ public class DamageSpell extends Spell {
 
     @Override
     public void onHit(PvpPlayer spellCaster, Location l) {
-        //TODO: spawn splash particles, red for students and green for deathEaters
+        //Spawn splash particles, red for students and green for deathEaters
         boolean students = spellCaster.getTeam().getTeam().equals(Team.STUDENT);
         for (int i = 0; i < 25; i++) {
             spawnSplashParticles(l, students);
