@@ -2,12 +2,16 @@ package com.carpercreative.minecraft.nkhpvp.spells;
 
 import com.carpercreative.minecraft.nkhpvp.NKHPvP;
 import com.carpercreative.minecraft.nkhpvp.PvpPlayer;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
+
+import java.util.Random;
 
 public abstract class Spell implements MetadataValue {
 
@@ -45,9 +49,16 @@ public abstract class Spell implements MetadataValue {
      */
     public abstract long getCooldown();
 
-    protected void spawnSplashParticles(Location l, double red, double blue) {
-        for (int i = 0; i < 25; i++) {
-            l.getWorld().spawnParticle(Particle.SPELL_MOB, l, 0, red, 0, blue, 1, null, true);
+    protected void spawnSplashParticles(Location loc, boolean students) {
+        Random r = new Random();
+        for (int i = 0; i < 10; i++) {
+            Location varied = loc.clone();
+            double scale = r.nextDouble();
+            Vector vec = new Vector(1, 0, 1);
+            vec.rotateAroundY(r.nextDouble() * 360);
+            vec.multiply(scale);
+            varied = varied.add(vec);
+            varied.getWorld().spawnParticle(Particle.REDSTONE, varied, 1, 0, 0, 0, 0, new Particle.DustOptions(students ? Color.RED : Color.GREEN, 1), true);
         }
     }
 

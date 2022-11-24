@@ -95,6 +95,8 @@ public class PvpPlayer {
     public void updateScoreboard() {
         if (getTeam() == null)
             return;
+        for (String entry : board.getEntries())
+            board.resetScores(entry);
         // Students
         // Kills: x
         // Damage: x

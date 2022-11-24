@@ -30,9 +30,10 @@ public class PvpTeam {
 
     public void addPlayer(PvpPlayer p) {
         //Register the player with this team
-        players.add(p);
+        if (!players.contains(p)) {
+            players.add(p);
+        }
         p.setTeam(this);
-        //TODO: Scoreboard teams ect
         //Teleport to spawn area
         teleportToSpawn(p);
         //Heal the player

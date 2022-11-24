@@ -20,7 +20,7 @@ Scoreboard:
   Damage: "Damage Dealt: "
   KD: "K/D Ratio: "
   Team: "Team: "
-  Spacer: "-=-=-=-=-=-=-=-=-=-=-"
+  Spacer: "-=-=-=-=-=-=-=-=-"
 
 End:
   Winner: "&6[TEAM_NAME] win [SCORE]"

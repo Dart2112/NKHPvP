@@ -69,7 +69,7 @@ public class HealingSpell extends Spell {
             for (int i = 0; i < 50; i++) {
                 Location varied = l.clone().subtract(distance / 2, 0, distance / 2);
                 varied = varied.add(r.nextDouble() * distance, 0, r.nextDouble() * distance);
-                varied.getWorld().spawnParticle(Particle.SPELL_MOB, varied, 0, students ? 1 : 0, 0, students ? 0 : 1, 1, null, true);
+                varied.getWorld().spawnParticle(Particle.SPELL_MOB, varied, 0, students ? 1 : 0, students ? 0 : 1, 0, 1, null, true);
             }
         }, 1, 5);
         cancelBukkitTask(spellCaster);

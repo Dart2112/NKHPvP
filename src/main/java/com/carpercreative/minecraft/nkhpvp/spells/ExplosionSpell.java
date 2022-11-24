@@ -22,7 +22,7 @@ public class ExplosionSpell extends Spell {
     public ExplosionSpell() {
         super("Explosion", "custom.spell.stupefy.cast", "");
         deathEatersFirework = FireworkEffect.builder().flicker(false).trail(false)
-                .with(FireworkEffect.Type.BALL).withColor(Color.BLUE).build();
+                .with(FireworkEffect.Type.BALL).withColor(Color.GREEN).build();
         studentsFirework = FireworkEffect.builder().flicker(false).trail(false)
                 .with(FireworkEffect.Type.BALL).withColor(Color.RED).build();
     }
@@ -43,8 +43,8 @@ public class ExplosionSpell extends Spell {
         new InstantFirework(explosionEffect, l);
         //Loop over nearby players and apply explosion damage
         //The distance from the center to search for players
-        double distance = 3.0;
-        double maxDamage = 5 * 2;
+        double distance = 5.0;
+        double maxDamage = 7 * 2;
         Collection<Entity> nearby = l.getWorld().getNearbyEntities(l, distance, distance, distance);
         nearby.removeIf(entity -> !(entity instanceof Player));
         for (Entity player : nearby) {

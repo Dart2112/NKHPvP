@@ -64,7 +64,7 @@ public class GameManager {
         isGameStarted = false;
         for (PvpPlayer p : allPlayers) {
             p.getBukkitPlayer().teleport(getLobbyLocationVaried());
-            //TODO: Clear scoreboard stuffs
+            p.getBukkitPlayer().setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         }
         progressBar.setVisible(false);
         allPlayers.clear();
@@ -79,9 +79,15 @@ public class GameManager {
     }
 
     public void addPlayer(Player player) {
+        //TODO: Make sure players only get added once
         player.setGameMode(GameMode.SURVIVAL);
-        PvpPlayer p = new PvpPlayer(player, plugin);
-        allPlayers.add(p);
+        PvpPlayer p;
+        if (getPlayer(player.getUniqueId()) == null) {
+            p = new PvpPlayer(player, plugin);
+            allPlayers.add(p);
+        } else {
+            p = getPlayer(player.getUniqueId());
+        }
         teleportToLobby(p);
         if (isGameStarted) {
             inductPlayerToTeam(p);
@@ -100,6 +106,8 @@ public class GameManager {
         PvpPlayer p = getPlayer(player.getUniqueId());
         if (p != null) {
             allPlayers.remove(p);
+            //Clear our scoreboard
+            player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             if (p.getTeam() != null)
                 p.getTeam().removePlayer(p);
         }

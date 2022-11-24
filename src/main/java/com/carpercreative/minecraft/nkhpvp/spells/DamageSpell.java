@@ -29,7 +29,7 @@ public class DamageSpell extends Spell {
         //TODO: spawn splash particles, red for students and green for deathEaters
         boolean students = spellCaster.getTeam().getTeam().equals(Team.STUDENT);
         for (int i = 0; i < 25; i++) {
-            spawnSplashParticles(l, students ? 1 : 0, students ? 0 : 1);
+            spawnSplashParticles(l, students);
         }
     }
 

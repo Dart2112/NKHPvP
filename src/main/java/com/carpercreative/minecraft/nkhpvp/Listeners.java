@@ -119,7 +119,7 @@ public class Listeners implements Listener {
 
         //Start task that makes a particle trail
         UUID ballUUID = ball.getUniqueId();
-        Material mat = pvpPlayer.getTeam().getTeam() == Team.STUDENT ? Material.RED_SHULKER_BOX : Material.BLUE_SHULKER_BOX;
+        Material mat = pvpPlayer.getTeam().getTeam() == Team.STUDENT ? Material.RED_SHULKER_BOX : Material.GREEN_SHULKER_BOX;
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             Entity entity = Bukkit.getEntity(ballUUID);
             if (!(entity instanceof Snowball)) {
@@ -129,7 +129,7 @@ public class Listeners implements Listener {
             Snowball b = (Snowball) Bukkit.getEntity(ballUUID);
             b.getLocation().getWorld().spawnParticle(Particle.FALLING_DUST, b.getLocation(), 1, mat.createBlockData());
 
-        }, 0, 2);
+        }, 0, 1);
         spellTrails.put(ballUUID, task);
     }
 
