@@ -40,7 +40,7 @@ public class PvpTeam {
         p.loadKit();
         //Tell the player which team they are on
         String msg = plugin.config.getMessage("Start.Player").replace("[TEAM_NAME]", getNiceTeamName());
-        p.getBukkitPlayer().sendMessage(msg);
+        p.getBukkitPlayer().sendTitle(msg, "", 5, 25, 5);
     }
 
     public void removePlayer(PvpPlayer p) {

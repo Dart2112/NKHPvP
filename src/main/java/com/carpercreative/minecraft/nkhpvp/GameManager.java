@@ -51,7 +51,6 @@ public class GameManager {
 
     public void enable() {
         isEnabled = true;
-        //TODO: Maybe dont do this, maybe use a command
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             //Only grab players who are in adventure or survival mode
             if (p.getGameMode() == GameMode.SURVIVAL || p.getGameMode() == GameMode.ADVENTURE) {
@@ -63,7 +62,6 @@ public class GameManager {
     public void disable() {
         isEnabled = false;
         isGameStarted = false;
-        //TODO: check if we should do this
         for (PvpPlayer p : allPlayers) {
             p.getBukkitPlayer().teleport(getLobbyLocationVaried());
             //TODO: Clear scoreboard stuffs
@@ -133,7 +131,7 @@ public class GameManager {
                 startGame();
             } else {
                 for (PvpPlayer p : allPlayers) {
-                    p.getBukkitPlayer().sendTitle("Game Starting in " + i, "", 2, 16, 2);
+                    p.getBukkitPlayer().sendTitle(plugin.config.getMessage("Start.Countdown") + i, "", 2, 16, 2);
                 }
                 i.getAndDecrement();
             }
@@ -176,7 +174,7 @@ public class GameManager {
             if (p.getTeam() == null)
                 continue;
             //Tell the player how they and their team went, This is temporary
-            //TODO: round damage values to two decimal places
+            //Round damage values to two decimal places, explosion fall off makes this messy
             DecimalFormat df = new DecimalFormat("#.##");
             PvpTeam team = p.getTeam();
             String teamMsg = "Team Scores: Kills: " + team.getKills() + ", Deaths: " + team.getDeaths()
@@ -228,6 +226,10 @@ public class GameManager {
     public void setTimer(int minutes) {
         timeRemaining = minutes * 60L;
         gameLength = minutes * 60L;
+    }
+
+    public void setTimerToZero() {
+        timeRemaining = 0L;
     }
 
     public Runnable getTimerTickTask() {

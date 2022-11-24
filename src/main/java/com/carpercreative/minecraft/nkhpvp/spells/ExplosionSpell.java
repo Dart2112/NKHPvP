@@ -22,7 +22,7 @@ public class ExplosionSpell extends Spell {
     public ExplosionSpell() {
         super("Explosion");
         deathEatersFirework = FireworkEffect.builder().flicker(false).trail(false)
-                .with(FireworkEffect.Type.BALL).withColor(Color.GREEN).build();
+                .with(FireworkEffect.Type.BALL).withColor(Color.BLUE).build();
         studentsFirework = FireworkEffect.builder().flicker(false).trail(false)
                 .with(FireworkEffect.Type.BALL).withColor(Color.RED).build();
     }
@@ -41,34 +41,31 @@ public class ExplosionSpell extends Spell {
         FireworkEffect explosionEffect = toDamage == Team.STUDENT ? deathEatersFirework : studentsFirework;
         //Spawn firework in team colour
         new InstantFirework(explosionEffect, l);
-        //Run all this one second later to align with the firework explosion
-        Bukkit.getScheduler().runTaskLater(NKHPvP.getInstance(), () -> {
-            //Loop over nearby players and apply explosion damage
-            //The distance from the center to search for players
-            double distance = 3.0;
-            double maxDamage = 5 * 2;
-            Collection<Entity> nearby = l.getWorld().getNearbyEntities(l, distance, distance, distance);
-            nearby.removeIf(entity -> !(entity instanceof Player));
-            for (Entity player : nearby) {
-                if (!(player instanceof Player)) {
-                    continue;
-                }
-                //Check if enemy team
-                PvpPlayer target = ((NKHPvP) NKHPvP.getInstance()).gameManager.getPlayer(player.getUniqueId());
-                if (target == null)
-                    continue;
-                if (target.getTeam().getTeam() != toDamage)
-                    continue;
-                //Damage fall off so that players closer to the center take more damage
-                double scaledDamage = (distance - player.getLocation().distance(l)) * (maxDamage / distance);
-                //Track damage for this player for the next 2 ticks
-                ((NKHPvP) NKHPvP.getInstance()).spellManager.trackDamage(target, spellCaster,
-                        EntityDamageEvent.DamageCause.ENTITY_ATTACK, 2);
-                //Apply scaled damage to the player
-                Bukkit.getScheduler().runTask(NKHPvP.getInstance(),
-                        () -> target.getBukkitPlayer().damage(scaledDamage, spellCaster.getBukkitPlayer()));
+        //Loop over nearby players and apply explosion damage
+        //The distance from the center to search for players
+        double distance = 3.0;
+        double maxDamage = 5 * 2;
+        Collection<Entity> nearby = l.getWorld().getNearbyEntities(l, distance, distance, distance);
+        nearby.removeIf(entity -> !(entity instanceof Player));
+        for (Entity player : nearby) {
+            if (!(player instanceof Player)) {
+                continue;
             }
-        }, 20);
+            //Check if enemy team
+            PvpPlayer target = ((NKHPvP) NKHPvP.getInstance()).gameManager.getPlayer(player.getUniqueId());
+            if (target == null)
+                continue;
+            if (target.getTeam().getTeam() != toDamage)
+                continue;
+            //Damage fall off so that players closer to the center take more damage
+            double scaledDamage = (distance - player.getLocation().distance(l)) * (maxDamage / distance);
+            //Track damage for this player for the next 2 ticks
+            ((NKHPvP) NKHPvP.getInstance()).spellManager.trackDamage(target, spellCaster,
+                    EntityDamageEvent.DamageCause.ENTITY_ATTACK, 2);
+            //Apply scaled damage to the player
+            Bukkit.getScheduler().runTask(NKHPvP.getInstance(),
+                    () -> target.getBukkitPlayer().damage(scaledDamage, spellCaster.getBukkitPlayer()));
+        }
     }
 
     @Override

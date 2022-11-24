@@ -7,11 +7,14 @@ Enable:
 
 Start:
   Success: "Starting game..."
-  Player: "You are on the [TEAM_NAME] team"
+  Countdown: "&6Game Starting in "
+  Player: "&6You are on the [TEAM_NAME] team"
   NumberFormat: "The time you entered is not a valid number"
 
+Cooldown: "&6You cannot cast this spell again yet"
+
 End:
-  Winner: "[TEAM_NAME] wins [SCORE]"
+  Winner: "&6[TEAM_NAME] win [SCORE]"
 
 SetSpawn:
   Success: "Spawn successfully set to your current location"

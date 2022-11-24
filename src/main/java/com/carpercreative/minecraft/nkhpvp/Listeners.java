@@ -2,9 +2,13 @@ package com.carpercreative.minecraft.nkhpvp;
 
 import com.carpercreative.minecraft.nkhpvp.spells.Spell;
 import com.carpercreative.minecraft.nkhpvp.util.SpellCaster;
+import com.carpercreative.minecraft.nkhpvp.util.SpellCooldown;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
@@ -15,9 +19,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class Listeners implements Listener {
 
     private final NKHPvP plugin;
+    HashMap<PvpPlayer, List<SpellCooldown>> cooldowns = new HashMap<>();
 
     public Listeners(NKHPvP plugin) {
         this.plugin = plugin;
@@ -26,7 +35,6 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        //TODO: Check if players should be auto added if the game is enabled
         if (plugin.gameManager.isEnabled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL)
             plugin.gameManager.addPlayer(e.getPlayer());
     }
@@ -71,6 +79,30 @@ public class Listeners implements Listener {
             //Spell with the snowballs name doesn't exist
             return;
         }
+
+        //Cooldown check
+        List<SpellCooldown> playersCooldowns;
+        if (!cooldowns.containsKey(pvpPlayer)) {
+            playersCooldowns = new ArrayList<>();
+        } else {
+            playersCooldowns = cooldowns.get(pvpPlayer);
+        }
+        for (SpellCooldown cooldown : playersCooldowns) {
+            if (cooldown.getSpell().asString().equals(spell.asString())) {
+                if (!cooldown.isExpired()) {
+                    //Player cant cast this again yet
+                    pvpPlayer.getBukkitPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                            new TextComponent(plugin.config.getMessage("Cooldown")));
+                    e.getEntity().remove();
+                    return;
+                }
+            }
+        }
+        //If we make it this far, we know the player can and has cast this
+        //Add the cooldown
+        playersCooldowns.add(new SpellCooldown(spell));
+        cooldowns.put(pvpPlayer, playersCooldowns);
+
         ball.setMetadata("Spell", spell);
         ball.setMetadata("SpellCaster", new SpellCaster(pvpPlayer));
     }
@@ -82,6 +114,11 @@ public class Listeners implements Listener {
             return;
         if (!(e.getEntity() instanceof Player)) {
             //We only want players who have been damaged
+            return;
+        }
+        if (e.getDamager() instanceof Firework) {
+            //Cancel as we want our code to do the damage, not the firework (explosion spell)
+            e.setCancelled(true);
             return;
         }
         if (!(e.getDamager() instanceof Snowball)) {
