@@ -24,7 +24,7 @@ public class PvpTeam {
         this.team = team;
         this.gm = gm;
         teamSpawn = new LocationUtils().parseStringToLocation
-                (plugin.getConfig().getString("Locations." + getNiceTeamName()));
+                (plugin.getConfig().getString("Locations." + getTeamName()));
     }
 
     public void addPlayer(PvpPlayer p) {
@@ -88,13 +88,13 @@ public class PvpTeam {
 
     public void setTeamSpawn(Location loc) {
         this.teamSpawn = loc;
-        plugin.getConfig().set("Locations." + getNiceTeamName(),
+        plugin.getConfig().set("Locations." + getTeamName(),
                 new LocationUtils().parseLocationToString(loc));
         plugin.saveConfig();
     }
 
     public ItemStack[] getTeamKit() {
-        Object data = NKHPvP.getInstance().getConfig().get("Kits." + getNiceTeamName());
+        Object data = NKHPvP.getInstance().getConfig().get("Kits." + getTeamName());
         if (data instanceof ArrayList) {
             return ((ArrayList<ItemStack>) data).toArray(new ItemStack[]{});
         } else {
@@ -104,11 +104,15 @@ public class PvpTeam {
 
     public void setTeamKit(Inventory inv) {
         ItemStack[] items = inv.getContents();
-        plugin.getConfig().set("Kits." + getNiceTeamName(), items);
+        plugin.getConfig().set("Kits." + getTeamName(), items);
         plugin.saveConfig();
     }
 
     public String getNiceTeamName() {
+        return team == Team.STUDENT ? "Students" : "Death Eaters";
+    }
+
+    public String getTeamName() {
         return team == Team.STUDENT ? "Students" : "DeathEaters";
     }
 
