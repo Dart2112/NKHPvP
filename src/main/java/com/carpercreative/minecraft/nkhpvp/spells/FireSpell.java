@@ -11,7 +11,7 @@ public class FireSpell extends Spell {
 
 
     public FireSpell() {
-        super("Fire");
+        super("Fire", "", "");
     }
 
     @Override

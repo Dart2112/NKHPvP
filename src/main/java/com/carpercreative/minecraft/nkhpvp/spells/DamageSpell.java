@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 public class DamageSpell extends Spell {
 
     public DamageSpell() {
-        super("Damage");
+        super("Damage", "custom.spell.patronus.cast", "");
     }
 
     @Override

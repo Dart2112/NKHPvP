@@ -4,6 +4,7 @@ import com.carpercreative.minecraft.nkhpvp.NKHPvP;
 import com.carpercreative.minecraft.nkhpvp.PvpPlayer;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.SoundCategory;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -13,9 +14,13 @@ import java.util.Random;
 public abstract class Spell implements MetadataValue {
 
     private final String spellName;
+    private final String castSound, hitSound;
 
-    public Spell(String spellName) {
+    public Spell(String spellName, String castSound, String hitSound) {
         this.spellName = spellName;
+        this.castSound = castSound;
+        this.hitSound = hitSound;
+        //Ding sound custom.gameplay_element.ding
     }
 
     /**
@@ -46,13 +51,16 @@ public abstract class Spell implements MetadataValue {
         double distance = 2.5;
         Random r = new Random();
         for (int i = 0; i < 25; i++) {
-            Location loc = l.clone();
-//            if (green < 0) {
-//                loc = loc.subtract(distance / 2, 0, distance / 2);
-//                loc = loc.add(r.nextDouble() * distance, 0, r.nextDouble() * distance);
-//            }
-            l.getWorld().spawnParticle(Particle.SPELL_MOB, loc, 0, red, 0, green, 1);
+            l.getWorld().spawnParticle(Particle.SPELL_MOB, l, 0, red, 0, green, 1);
         }
+    }
+
+    public void playCastSound(Location loc) {
+        loc.getWorld().playSound(loc, castSound, SoundCategory.MASTER, 20f, 20f);
+    }
+
+    public void playHitSound(Location loc) {
+        loc.getWorld().playSound(loc, castSound, SoundCategory.MASTER, 20f, 20f);
     }
 
     @Override

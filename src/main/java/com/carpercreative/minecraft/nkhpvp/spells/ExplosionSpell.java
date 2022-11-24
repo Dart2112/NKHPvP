@@ -20,7 +20,7 @@ public class ExplosionSpell extends Spell {
     private final FireworkEffect deathEatersFirework, studentsFirework;
 
     public ExplosionSpell() {
-        super("Explosion");
+        super("Explosion", "custom.spell.stupefy.cast", "");
         deathEatersFirework = FireworkEffect.builder().flicker(false).trail(false)
                 .with(FireworkEffect.Type.BALL).withColor(Color.BLUE).build();
         studentsFirework = FireworkEffect.builder().flicker(false).trail(false)

@@ -25,7 +25,7 @@ public class HealingSpell extends Spell {
     private final int secondsToExist = 3;
 
     public HealingSpell() {
-        super("Heal");
+        super("Heal", "custom.spell.alohomora.cast", "");
     }
 
     @Override

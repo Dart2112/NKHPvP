@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 public class LevitationSpell extends Spell {
 
     public LevitationSpell() {
-        super("Levitation");
+        super("Levitation", "custom.spell.immobulus.cast", "");
     }
 
     @Override

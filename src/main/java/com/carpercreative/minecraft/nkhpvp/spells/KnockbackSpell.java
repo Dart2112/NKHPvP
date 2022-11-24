@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 public class KnockbackSpell extends Spell {
 
     public KnockbackSpell() {
-        super("Knockback");
+        super("Knockback", "", "");
     }
 
     @Override

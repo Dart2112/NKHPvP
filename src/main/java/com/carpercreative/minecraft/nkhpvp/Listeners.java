@@ -8,6 +8,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -18,15 +20,18 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class Listeners implements Listener {
 
     private final NKHPvP plugin;
     HashMap<PvpPlayer, List<SpellCooldown>> cooldowns = new HashMap<>();
+    HashMap<UUID, BukkitTask> spellTrails = new HashMap<>();
 
     public Listeners(NKHPvP plugin) {
         this.plugin = plugin;
@@ -105,6 +110,33 @@ public class Listeners implements Listener {
 
         ball.setMetadata("Spell", spell);
         ball.setMetadata("SpellCaster", new SpellCaster(pvpPlayer));
+
+        //Play Sound
+        spell.playCastSound(ball.getLocation());
+
+        //Set Gravity false
+        ball.setGravity(false);
+
+        //Start task that makes a particle trail
+        UUID ballUUID = ball.getUniqueId();
+        Material mat = pvpPlayer.getTeam().getTeam() == Team.STUDENT ? Material.RED_SHULKER_BOX : Material.BLUE_SHULKER_BOX;
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            Entity entity = Bukkit.getEntity(ballUUID);
+            if (!(entity instanceof Snowball)) {
+                cancelTrailTask(ballUUID);
+                return;
+            }
+            Snowball b = (Snowball) Bukkit.getEntity(ballUUID);
+            b.getLocation().getWorld().spawnParticle(Particle.FALLING_DUST, b.getLocation(), 1, mat.createBlockData());
+
+        }, 0, 2);
+        spellTrails.put(ballUUID, task);
+    }
+
+    private void cancelTrailTask(UUID uuid) {
+        BukkitTask task = spellTrails.get(uuid);
+        if (task != null)
+            task.cancel();
     }
 
     @EventHandler
@@ -137,6 +169,7 @@ public class Listeners implements Listener {
         //Run the effect on the player
         PvpPlayer damageTaker = plugin.gameManager.getPlayer(e.getEntity().getUniqueId());
         spell.onHitPlayer(damageGiver, damageTaker, e);
+        spell.playHitSound(ball.getLocation());
         //Negate the normal damage done to the player and instead allow the spells to do damage
         e.setDamage(0);
     }
