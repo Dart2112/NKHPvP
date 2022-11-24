@@ -118,4 +118,7 @@ public class PvpTeam {
         damageDealt = 0;
     }
 
+    public Team getTeam() {
+        return team;
+    }
 }

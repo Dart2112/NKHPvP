@@ -15,6 +15,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import org.ocpsoft.prettytime.units.JustNow;
 import org.ocpsoft.prettytime.units.Millisecond;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -175,11 +176,13 @@ public class GameManager {
             if (p.getTeam() == null)
                 continue;
             //Tell the player how they and their team went, This is temporary
+            //TODO: round damage values to two decimal places
+            DecimalFormat df = new DecimalFormat("#.##");
             PvpTeam team = p.getTeam();
             String teamMsg = "Team Scores: Kills: " + team.getKills() + ", Deaths: " + team.getDeaths()
-                    + ", Damage Dealt: " + team.getDamageDealt();
+                    + ", Damage Dealt: " + df.format(team.getDamageDealt());
             String personalMsg = "Your Scores: Kills: " + p.getKills() + ", Deaths: " + p.getDeaths()
-                    + ", Damage Dealt: " + p.getDamageDealt();
+                    + ", Damage Dealt: " + df.format(p.getDamageDealt());
             p.getBukkitPlayer().sendMessage(teamMsg, personalMsg);
             //This is mainly so players who are currently dead respawn in the correct place
             p.setTeam(null);

@@ -1,30 +1,25 @@
 package com.carpercreative.minecraft.nkhpvp.spells;
 
-import com.carpercreative.minecraft.nkhpvp.NKHPvP;
 import com.carpercreative.minecraft.nkhpvp.PvpPlayer;
 import org.bukkit.Location;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
-public class FireSpell extends Spell {
+public class LevitationSpell extends Spell {
 
-
-    public FireSpell() {
-        super("Fire");
+    public LevitationSpell() {
+        super("Levitation");
     }
 
     @Override
     public void onHitPlayer(PvpPlayer spellCaster, PvpPlayer spellRecipient, EntityDamageByEntityEvent e) {
-        int fireTicks = 40;
-        spellRecipient.getBukkitPlayer().setFireTicks(fireTicks);
-        //Track fire damage for this player for the fire ticks
-        ((NKHPvP) NKHPvP.getInstance()).spellManager.trackDamage(spellRecipient, spellCaster,
-                EntityDamageEvent.DamageCause.FIRE_TICK, fireTicks);
+        spellRecipient.getBukkitPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 40, 1));
     }
 
     @Override
     public void onHit(PvpPlayer spellCaster, Location l) {
-
+        //TODO: use same particles as damage
     }
 
     @Override

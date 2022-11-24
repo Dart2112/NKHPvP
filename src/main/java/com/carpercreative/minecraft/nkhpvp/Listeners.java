@@ -9,10 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -79,7 +76,7 @@ public class Listeners implements Listener {
     }
 
     @EventHandler
-    public void onSnowballHit(EntityDamageByEntityEvent e) {
+    public void onSnowballHitPlayer(EntityDamageByEntityEvent e) {
         //Check that the game is running
         if (!plugin.gameManager.isGameStarted())
             return;
@@ -102,9 +99,30 @@ public class Listeners implements Listener {
         PvpPlayer damageGiver = ((SpellCaster) ball.getMetadata("SpellCaster").get(0)).getSpellCaster();
         //Run the effect on the player
         PvpPlayer damageTaker = plugin.gameManager.getPlayer(e.getEntity().getUniqueId());
-        spell.applyEffect(damageGiver, damageTaker, e);
+        spell.onHitPlayer(damageGiver, damageTaker, e);
         //Negate the normal damage done to the player and instead allow the spells to do damage
         e.setDamage(0);
+    }
+
+    @EventHandler
+    public void onSnowballHitAnything(ProjectileHitEvent e) {
+        //Check that the game is running
+        if (!plugin.gameManager.isGameStarted())
+            return;
+        if (!(e.getEntity() instanceof Snowball)) {
+            //We only want players who have been damaged by a snowball
+            return;
+        }
+        //Get the snowball
+        Snowball ball = (Snowball) e.getEntity();
+        //Check it is a spell snowball
+        if (ball.getMetadata("Spell").size() == 0)
+            //It's not one of our snowballs
+            return;
+        //Get the spell attached to the snowball
+        Spell spell = (Spell) ball.getMetadata("Spell").get(0);
+        PvpPlayer damageGiver = ((SpellCaster) ball.getMetadata("SpellCaster").get(0)).getSpellCaster();
+        spell.onHit(damageGiver, e.getEntity().getLocation());
     }
 
     @EventHandler
