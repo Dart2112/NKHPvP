@@ -9,8 +9,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Random;
-
 public abstract class Spell implements MetadataValue {
 
     private final String spellName;
@@ -47,11 +45,9 @@ public abstract class Spell implements MetadataValue {
      */
     public abstract long getCooldown();
 
-    protected void spawnSplashParticles(Location l, double red, double green) {
-        double distance = 2.5;
-        Random r = new Random();
+    protected void spawnSplashParticles(Location l, double red, double blue) {
         for (int i = 0; i < 25; i++) {
-            l.getWorld().spawnParticle(Particle.SPELL_MOB, l, 0, red, 0, green, 1);
+            l.getWorld().spawnParticle(Particle.SPELL_MOB, l, 0, red, 0, blue, 1, null, true);
         }
     }
 

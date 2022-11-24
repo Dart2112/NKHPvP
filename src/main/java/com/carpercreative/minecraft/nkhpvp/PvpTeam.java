@@ -6,6 +6,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +40,9 @@ public class PvpTeam {
         //Set inventory to team kit
         p.loadKit();
         //Tell the player which team they are on
-        String msg = plugin.config.getMessage("Start.Player").replace("[TEAM_NAME]", getNiceTeamName());
-        p.getBukkitPlayer().sendTitle(msg, "", 5, 25, 5);
+        String title = plugin.config.getMessage("Start.Begin");
+        String subTitle = plugin.config.getMessage("Start.Player").replace("[TEAM_NAME]", getNiceTeamName());
+        p.getBukkitPlayer().sendTitle(title, subTitle, 5, 60, 5);
     }
 
     public void removePlayer(PvpPlayer p) {
@@ -84,6 +86,11 @@ public class PvpTeam {
 
     public double getDamageDealt() {
         return damageDealt;
+    }
+
+    public String getDamageDealtRounded() {
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(getDamageDealt());
     }
 
     public void setTeamSpawn(Location loc) {

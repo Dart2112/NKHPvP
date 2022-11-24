@@ -80,13 +80,11 @@ public class GameManager {
 
     public void addPlayer(Player player) {
         player.setGameMode(GameMode.SURVIVAL);
-        PvpPlayer p = new PvpPlayer(player);
+        PvpPlayer p = new PvpPlayer(player, plugin);
         allPlayers.add(p);
         teleportToLobby(p);
         if (isGameStarted) {
             inductPlayerToTeam(p);
-        } else {
-            //TODO: Enable whatever scoreboards or anything that is needed
         }
     }
 
@@ -143,10 +141,10 @@ public class GameManager {
         //Reset team scores
         deathEaters.resetScores();
         students.resetScores();
-        //TODO: Reset scoreboards or whatever
         for (PvpPlayer p : allPlayers) {
             p.resetScores();
             inductPlayerToTeam(p);
+            p.updateScoreboard();
         }
         //Start timer
         timerTask = Bukkit.getScheduler().runTaskTimer(plugin, getTimerTickTask(), 20, 20);
@@ -244,6 +242,9 @@ public class GameManager {
             double progress = Double.max(0, (float) timeRemaining / gameLength);
             progressBar.setProgress(progress);
             progressBar.setTitle("Time Remaining: " + getTimeDifference(System.currentTimeMillis() + (timeRemaining * 1000)));
+            //Update all players scoreboards
+            for (PvpPlayer player : allPlayers)
+                player.updateScoreboard();
         };
     }
 
