@@ -5,6 +5,8 @@ Enable:
   DisableSuccess: "PvP plugin disabling"
   Error: "The game is already in this state"
 
+PlayerAdded: "&6Welcome to the PvP Lobby, please wait for the game to begin"
+
 Start:
   Success: "Starting game..."
   Countdown: "&6Game Starting in "

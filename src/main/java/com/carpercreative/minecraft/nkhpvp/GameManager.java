@@ -15,7 +15,6 @@ import org.ocpsoft.prettytime.PrettyTime;
 import org.ocpsoft.prettytime.units.JustNow;
 import org.ocpsoft.prettytime.units.Millisecond;
 
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -90,6 +89,8 @@ public class GameManager {
         teleportToLobby(p);
         if (isGameStarted) {
             inductPlayerToTeam(p);
+        } else {
+            player.sendMessage(plugin.config.getMessage("PlayerAdded"));
         }
     }
 
@@ -101,9 +102,17 @@ public class GameManager {
         return null;
     }
 
+    public List<PvpPlayer> getAllPlayers() {
+        return allPlayers;
+    }
+
     public void removePlayer(Player player) {
         PvpPlayer p = getPlayer(player.getUniqueId());
         if (p != null) {
+            if (isGameStarted()) {
+                player.getInventory().clear();
+                progressBar.removePlayer(player);
+            }
             allPlayers.remove(p);
             //Clear our scoreboard
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
@@ -178,15 +187,6 @@ public class GameManager {
             //Safety check in case a player has joined but not been assigned a team when the game ends
             if (p.getTeam() == null)
                 continue;
-            //Tell the player how they and their team went, This is temporary
-            //Round damage values to two decimal places, explosion fall off makes this messy
-            DecimalFormat df = new DecimalFormat("#.##");
-            PvpTeam team = p.getTeam();
-            String teamMsg = "Team Scores: Kills: " + team.getKills() + ", Deaths: " + team.getDeaths()
-                    + ", Damage Dealt: " + df.format(team.getDamageDealt());
-            String personalMsg = "Your Scores: Kills: " + p.getKills() + ", Deaths: " + p.getDeaths()
-                    + ", Damage Dealt: " + df.format(p.getDamageDealt());
-            p.getBukkitPlayer().sendMessage(teamMsg, personalMsg);
             //This is mainly so players who are currently dead respawn in the correct place
             p.setTeam(null);
             //Teleport players to lobby

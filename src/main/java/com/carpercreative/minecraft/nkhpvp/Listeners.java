@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -47,6 +48,38 @@ public class Listeners implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         plugin.gameManager.removePlayer(e.getPlayer());
+    }
+
+    @EventHandler
+    public void onHealthRegeneration(EntityRegainHealthEvent e) {
+        //Only check when the game is running
+        if (!plugin.gameManager.isGameStarted())
+            return;
+        //Make sure it's a player
+        if (!(e.getEntity() instanceof Player)) {
+            return;
+        }
+        //Make sure it's a player in PvP
+        if (plugin.gameManager.getPlayer(e.getEntity().getUniqueId()) == null)
+            return;
+        //Check its natural regen
+        EntityRegainHealthEvent.RegainReason reason = e.getRegainReason();
+        if (reason == EntityRegainHealthEvent.RegainReason.SATIATED || reason == EntityRegainHealthEvent.RegainReason.REGEN) {
+            //Cancel it
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
+        //Only check when the game is enabled
+        if (!plugin.gameManager.isEnabled())
+            return;
+        //Make sure it's a player in PvP
+        if (plugin.gameManager.getPlayer(e.getPlayer().getUniqueId()) == null)
+            return;
+        //Stop them from breaking blocks
+        e.setCancelled(true);
     }
 
     @EventHandler

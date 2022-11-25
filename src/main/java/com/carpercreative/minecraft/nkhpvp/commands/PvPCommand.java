@@ -30,6 +30,15 @@ public class PvPCommand extends LapisCoreCommand {
             return;
         }
 
+        // /pvp leave
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("leave")) {
+            if (isNotPlayer(sender, "Error.MustBePlayer"))
+                return;
+            plugin.gameManager.removePlayer((Player) sender);
+            return;
+        }
+
         //Check that it's either the console or an OPed player
         if (sender instanceof Player) {
             if (!sender.isOp()) {

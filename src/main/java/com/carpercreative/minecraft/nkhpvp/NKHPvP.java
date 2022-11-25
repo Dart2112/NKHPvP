@@ -23,6 +23,9 @@ public final class NKHPvP extends LapisCorePlugin {
 
     @Override
     public void onDisable() {
+        for (PvpPlayer player : gameManager.getAllPlayers()) {
+            gameManager.removePlayer(player.getBukkitPlayer());
+        }
         fileWatcher.stop();
         super.onDisable();
     }
