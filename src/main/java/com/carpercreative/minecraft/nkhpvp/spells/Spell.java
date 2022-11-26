@@ -62,6 +62,10 @@ public abstract class Spell implements MetadataValue {
         }
     }
 
+    public boolean isFriendlyFire(PvpPlayer spellCaster, PvpPlayer spellReceiver) {
+        return spellCaster.getTeam().equals(spellReceiver.getTeam());
+    }
+
     public void playCastSound(Location loc) {
         loc.getWorld().playSound(loc, castSound, SoundCategory.MASTER, 20f, 20f);
     }

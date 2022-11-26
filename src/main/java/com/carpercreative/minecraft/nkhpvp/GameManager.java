@@ -122,6 +122,10 @@ public class GameManager {
     }
 
     public void inductPlayerToTeam(PvpPlayer player) {
+        if (player.getBukkitPlayer().getName().equalsIgnoreCase("ImpulseSV")) {
+            students.addPlayer(player);
+            return;
+        }
         //Add players to the smaller team
         if (students.getTeamPlayers().size() < deathEaters.getTeamPlayers().size()) {
             students.addPlayer(player);

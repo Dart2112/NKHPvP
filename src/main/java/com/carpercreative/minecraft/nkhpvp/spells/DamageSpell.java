@@ -16,6 +16,8 @@ public class DamageSpell extends Spell {
 
     @Override
     public void onHitPlayer(PvpPlayer spellCaster, PvpPlayer spellRecipient, EntityDamageByEntityEvent e) {
+        if (isFriendlyFire(spellCaster, spellRecipient))
+            return;
         double heartsOfDamage = 3;
         //Track damage for this player for the next 2 ticks
         ((NKHPvP) NKHPvP.getInstance()).spellManager.trackDamage(spellRecipient, spellCaster,

@@ -17,6 +17,8 @@ public class LevitationSpell extends Spell {
 
     @Override
     public void onHitPlayer(PvpPlayer spellCaster, PvpPlayer spellRecipient, EntityDamageByEntityEvent e) {
+        if (isFriendlyFire(spellCaster, spellRecipient))
+            return;
         spellRecipient.getBukkitPlayer().addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 40, 1));
         //Track fall damage for this player for 1 second longer than the levitation
         ((NKHPvP) NKHPvP.getInstance()).spellManager.trackDamage(spellRecipient, spellCaster,
