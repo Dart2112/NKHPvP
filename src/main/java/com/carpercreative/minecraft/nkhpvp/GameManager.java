@@ -122,6 +122,7 @@ public class GameManager {
             if (p.getTeam() != null)
                 p.getTeam().removePlayer(p);
             player.sendMessage(plugin.config.getMessage("PlayerRemoved"));
+            teleportToLobby(p);
         }
     }
 
