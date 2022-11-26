@@ -242,6 +242,7 @@ public class GameManager {
     }
 
     public Runnable getTimerTickTask() {
+        AtomicInteger i = new AtomicInteger(10);
         return () -> {
             //Clean up this task if the timer has reached 0
             if (timeRemaining <= 0) {
@@ -253,9 +254,14 @@ public class GameManager {
             double progress = Double.max(0, (float) timeRemaining / gameLength);
             progressBar.setProgress(progress);
             progressBar.setTitle("Time Remaining: " + getTimeDifference(System.currentTimeMillis() + (timeRemaining * 1000)));
-            //Update all players scoreboards
-            for (PvpPlayer player : allPlayers)
-                player.updateScoreboard();
+            //Update all players scoreboards every 10 seconds
+            if (i.get() > 0) {
+                i.getAndDecrement();
+            } else {
+                i.set(10);
+                for (PvpPlayer player : allPlayers)
+                    player.updateScoreboard();
+            }
         };
     }
 

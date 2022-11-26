@@ -85,6 +85,7 @@ public class PvPCommand extends LapisCoreCommand {
 
         if (args.length == 1 && args[0].equalsIgnoreCase("stop")) {
             plugin.gameManager.setTimerToZero();
+            sendMessage(sender, "Stop");
         }
 
         // /pvp setSpawn (lobby, student, deatheater)

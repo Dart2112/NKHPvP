@@ -24,6 +24,8 @@ Scoreboard:
   Team: "Team: "
   Spacer: "-=-=-=-=-=-=-=-=-"
 
+Stop: "Stopping the current game"
+
 End:
   Winner: "&6[TEAM_NAME] win [SCORE]"
 
