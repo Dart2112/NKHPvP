@@ -126,6 +126,10 @@ public class GameManager {
             students.addPlayer(player);
             return;
         }
+        if (player.getBukkitPlayer().getName().equalsIgnoreCase("Skizzleman")) {
+            deathEaters.addPlayer(player);
+            return;
+        }
         //Add players to the smaller team
         if (students.getTeamPlayers().size() < deathEaters.getTeamPlayers().size()) {
             students.addPlayer(player);
