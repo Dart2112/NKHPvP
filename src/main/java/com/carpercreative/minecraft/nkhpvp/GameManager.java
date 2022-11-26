@@ -89,6 +89,7 @@ public class GameManager {
         teleportToLobby(p);
         if (isGameStarted) {
             inductPlayerToTeam(p);
+            player.sendMessage(plugin.config.getMessage("PlayerAddedDuringGame"));
         } else {
             player.sendMessage(plugin.config.getMessage("PlayerAdded"));
         }
@@ -118,6 +119,7 @@ public class GameManager {
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             if (p.getTeam() != null)
                 p.getTeam().removePlayer(p);
+            player.sendMessage(plugin.config.getMessage("PlayerRemoved"));
         }
     }
 
