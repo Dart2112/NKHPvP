@@ -86,7 +86,9 @@ public class GameManager {
         } else {
             p = getPlayer(player.getUniqueId());
         }
-        teleportToLobby(p);
+        if (p.getTeam() == null) {
+            teleportToLobby(p);
+        }
         if (isGameStarted) {
             inductPlayerToTeam(p);
             player.sendMessage(plugin.config.getMessage("PlayerAddedDuringGame"));
