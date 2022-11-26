@@ -6,6 +6,8 @@ Enable:
   Error: "The game is already in this state"
 
 PlayerAdded: "&6Welcome to the PvP Lobby, please wait for the game to begin"
+PlayerAddedDuringGame: "&6The fight has already started! Go, make a difference!"
+PlayerRemoved: "&6You left the PvP Lobby."
 
 Start:
   Success: "Starting game..."

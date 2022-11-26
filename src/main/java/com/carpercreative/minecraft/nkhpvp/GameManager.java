@@ -86,9 +86,12 @@ public class GameManager {
         } else {
             p = getPlayer(player.getUniqueId());
         }
-        teleportToLobby(p);
+        if (p.getTeam() == null) {
+            teleportToLobby(p);
+        }
         if (isGameStarted) {
             inductPlayerToTeam(p);
+            player.sendMessage(plugin.config.getMessage("PlayerAddedDuringGame"));
         } else {
             player.sendMessage(plugin.config.getMessage("PlayerAdded"));
         }
@@ -118,12 +121,21 @@ public class GameManager {
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
             if (p.getTeam() != null)
                 p.getTeam().removePlayer(p);
+            player.sendMessage(plugin.config.getMessage("PlayerRemoved"));
+            teleportToLobby(p);
         }
     }
 
     public void inductPlayerToTeam(PvpPlayer player) {
+        // Player already has a team - prevent joining both
+        if (player.getTeam() != null) return;
+
         if (player.getBukkitPlayer().getName().equalsIgnoreCase("ImpulseSV")) {
             students.addPlayer(player);
+            return;
+        }
+        if (player.getBukkitPlayer().getName().equalsIgnoreCase("Skizzleman")) {
+            deathEaters.addPlayer(player);
             return;
         }
         //Add players to the smaller team
