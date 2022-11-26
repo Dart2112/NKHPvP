@@ -124,6 +124,9 @@ public class GameManager {
     }
 
     public void inductPlayerToTeam(PvpPlayer player) {
+        // Player already has a team - prevent joining both
+        if (player.getTeam() != null) return;
+
         if (player.getBukkitPlayer().getName().equalsIgnoreCase("ImpulseSV")) {
             students.addPlayer(player);
             return;
